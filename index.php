@@ -137,18 +137,24 @@ function printTree(array $events, int $level = 0) {
   if (!$events) {return;}
   global $ts, $tw;
   foreach ($events as $event) {
-    $ets = ($event->getData('tsc_start') - $ts) / $tw;
-    $etf = ($event->getData('tsc_end') - $ts) / $tw;
-    if ($etf - $ets < 0.0001) {
+    $ets = ($event->getData('tsc_start') - $ts) / $tw * 100;
+    $etf = ($event->getData('tsc_end') - $ts) / $tw * 100;
+    if ($etf - $ets < 0.0001 * 100) {
       continue;
     }
     ?><g>
-      <rect  x="<?php echo $ets ?>"
+      <rect  x="<?php echo $ets ?>%"
         y="<?php echo $level * 16 ?>"
-        width="<?php echo $etf - $ets ?>"
+        width="<?php echo $etf - $ets ?>%"
         height="<?php echo 15 ?>"
         fill="#00545C"
         ></rect>
+      <text
+        font-size="10"
+        fill="#FFFFFF"
+        x="<?php echo $ets ?>%"
+        y="<?php echo $level * 16 + 11 ?>"
+        ><?php echo $event->getName(); ?></text>
         <?php printTree($event->getData('children'), $level + 1); ?>
       </g><?php
   }
@@ -165,9 +171,9 @@ function printTree(array $events, int $level = 0) {
   <div><?php echo $info; ?></div>
   <svg xmlns="http://www.w3.org/2000/svg"
     width="100%"
-    height="100%"
+    height="<?php echo $maxDepth * 16 ?>"
     preserveAspectRatio="none"
-    viewBox="<?php echo 0, ' ', 0, ' ', 1, ' ', $maxDepth * 16 ?>"
+    viewBox="<?php echo 0, ' ', 0, ' ', '100%', ' ', $maxDepth * 16 ?>"
     >
     <?php printTree($roots); ?>
   </svg>
