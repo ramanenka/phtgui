@@ -1,11 +1,25 @@
 <?php
 
+function chop1(string $string, string $char) {
+  $i = strlen($string);
+  $c = 2;
+  while ($c > 0 && --$i >= 0) {
+    if ($string[$i] == $char) {
+      $c--;
+    }
+  }
+
+  return $i == 0 ? $string : substr($string, $i + 1);
+}
+
 class FunctionCallEvent implements JsonSerializable
 {
   protected $data;
 
+  protected $children = [];
+
   public function __construct(array $data) {
-    $this->data = $data + ['children' => []];
+    $this->data = $data;
   }
 
   public function addData(array $data) {
@@ -16,12 +30,16 @@ class FunctionCallEvent implements JsonSerializable
     return $this->data[$key];
   }
 
+  public function getChildren() {
+    return $this->children;
+  }
+
   public function getName() {
     global $strings;
     $result = "";
 
     if (!empty($this->data['class_name_id'])) {
-      $result .= $strings[$this->data['class_name_id']] . '::';
+      $result .= chop1($strings[$this->data['class_name_id']], '\\') . '::';
     }
 
     if (!empty($this->data['function_name_id'])) {
@@ -29,18 +47,19 @@ class FunctionCallEvent implements JsonSerializable
     }
 
     if (!$result) {
-      $result = $strings[$this->data['filename_id']] . ':' . $this->data['line_start'];
+      $result = chop1($strings[$this->data['filename_id']], '/')
+        . ':' . $this->data['line_start'];
     }
 
     return $result;
   }
 
   public function addChild(FunctionCallEvent $f) {
-    $this->data['children'][] = $f;
+    $this->children[] = $f;
   }
 
   public function jsonSerialize() {
-    return $this->data;
+    return ['attributes' => $this->data, 'children' => $this->children];
   }
 }
 
@@ -121,7 +140,7 @@ while ($p < $len) {
 }
 while ($stack) {
   $o = array_pop($stack);
-  $children = $o->getData('children');
+  $children = $o->getChildren();
   $tscEnd = $children
     ? $children[count($children) - 1]->getData('tsc_end')
     : $o->getData('tsc_start');
@@ -139,7 +158,7 @@ function printTree(array $events, int $level = 0) {
   foreach ($events as $event) {
     $ets = ($event->getData('tsc_start') - $ts) / $tw * 100;
     $etf = ($event->getData('tsc_end') - $ts) / $tw * 100;
-    if ($etf - $ets < 0.0001 * 100) {
+    if ($etf - $ets < 0.0005 * 100) {
       continue;
     }
     ?><g>
@@ -150,12 +169,10 @@ function printTree(array $events, int $level = 0) {
         fill="#00545C"
         ></rect>
       <text
-        font-size="10"
-        fill="#FFFFFF"
         x="<?php echo $ets ?>%"
         y="<?php echo $level * 16 + 11 ?>"
-        ><?php echo $event->getName(); ?></text>
-        <?php printTree($event->getData('children'), $level + 1); ?>
+        ><tspan dx="5"><?php echo $event->getName(); ?></tspan></text>
+        <?php printTree($event->getChildren(), $level + 1); ?>
       </g><?php
   }
 }
@@ -173,9 +190,37 @@ function printTree(array $events, int $level = 0) {
     width="100%"
     height="<?php echo $maxDepth * 16 ?>"
     preserveAspectRatio="none"
-    viewBox="<?php echo 0, ' ', 0, ' ', '100%', ' ', $maxDepth * 16 ?>"
     >
-    <?php printTree($roots); ?>
+    <style>
+      text { font-size: 10px; fill: #FFFFFF; }
+      /*rect { fill: none; stroke: #add8e6; }*/
+    </style>
+    <?php //printTree($roots); ?>
   </svg>
+  <script type="text/javascript">
+    function Event(attrs) {
+      this.attrs = attrs;
+      this.parent = null;
+      this.children = [];
+    }
+    Event.prototype.addChild = function(child) {
+      this.children.push(child);
+      child.setParent(this);
+    }
+    Event.prototype.setParent = function(parent) {
+      this.parent = parent;
+    }
+    var a = <?php echo json_encode(['strings' => $strings, 'events' => $roots]); ?>;
+    function createTree(ev) {
+      var r = new Event(ev.attributes);
+      for (var i = 0; i < ev.children.length; i++) {
+        r.addChild(createTree(ev.children[i]))
+      }
+      return r;
+    }
+    var t = window.performance.now();
+    var tree = createTree(a['events'][0])
+    console.log('tree created in ', window.performance.now() - t)
+  </script>
 </body>
 </html>
