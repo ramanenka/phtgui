@@ -1,5 +1,7 @@
 <?php
 
+require 'src/Decoder.php';
+
 function chop1(string $string, string $char) {
   $i = strlen($string);
   $c = 2;
@@ -72,85 +74,19 @@ if (!file_exists($file)) {
 //echo '<pre>';
 
 $content = file_get_contents($file);
-$len = strlen($content);
-$p = 0;
-$t = microtime(true);
-$evc = 0;
-$evcs = 0;
-$evcf = 0;
-$stack = [];
-$roots = [];
-$strings = [];
-$maxDepth = 0;
-while ($p < $len) {
-  $evType = unpack("@$p/Cevent_type", $content)['event_type'];
-  $p += 1;
-  $evc++;
 
-  switch($evType) {
-    case 3:
-      $ev = [];
-      $ev = unpack(
-        "@$p/"
-        .'Qtsc_start/'
-        .'Lfilename_id/'
-        .'Lfunction_name_id/'
-        .'Lclass_name_id/'
-        .'Lline_start',
-        $content
-      );
-      $p += 8 + 4 * 4;
+$decoder = new Decoder();
+$data = $decoder->decode($content);
 
-      $o = new FunctionCallEvent($ev);
-      if ($stack) {
-        $stack[count($stack) - 1]->addChild($o);
-      } else {
-        $roots[] = $o;
-      }
-
-      array_push($stack, $o);
-      $maxDepth = count($stack) > $maxDepth ? count($stack) : $maxDepth;
-
-      //echo "FNC START => ", json_encode($ev, JSON_PRETTY_PRINT), "\n";
-      $evcs++;
-      break;
-
-    case 4:
-      $ev = unpack("@$p/Qtsc_end", $content);
-      $p += 8;
-
-      $o = array_pop($stack);
-      $o->addData($ev);
-
-      //echo "FNC END => ", json_encode($ev, JSON_PRETTY_PRINT), "\n";
-      $evcf++;
-      break;
-    case 5:
-      $ev = unpack("@$p/Lstring_id/Z*string", $content);
-      //echo "STRING => ", json_encode($ev, JSON_PRETTY_PRINT), "\n";
-      $p += 4 + strlen($ev['string']) + 1;
-      $strings[$ev['string_id']] = $ev['string'];
-      break;
-
-    default:
-      echo "unknown event type => $evType, exiting...\n";
-      exit;
-      break;
-  }
-}
-while ($stack) {
-  $o = array_pop($stack);
-  $children = $o->getChildren();
-  $tscEnd = $children
-    ? $children[count($children) - 1]->getData('tsc_end')
-    : $o->getData('tsc_start');
-  $o->addData(['tsc_end' => $tscEnd]);
-}
-$rootsCount = count($roots);
-$ts = $roots[0]->getData('tsc_start');
-$tf = $roots[count($roots) - 1]->getData('tsc_end');
-$tw = $tf - $ts;
-$info = "Events: $evc($evcs, $evcf), Roots: {$rootsCount}, Time to decode: " . (microtime(true) - $t);
+$rootsCount = count($data['roots']);
+$stringsCount = count($data['strings']);
+$info = "Events: {$data['events_count']}, "
+  . "Roots: {$rootsCount}, "
+  . "Strings: {$stringsCount}, "
+  . "Max depth: {$data['max_depth']}, "
+  . "TS: {$data['ts']}, "
+  . "TF: {$data['tf']}, "
+  ." Time to decode: {$data['time_to_decode']}";
 
 function printTree(array $events, int $level = 0) {
   if (!$events) {return;}
@@ -188,7 +124,7 @@ function printTree(array $events, int $level = 0) {
   <div><?php echo $info; ?></div>
   <svg xmlns="http://www.w3.org/2000/svg"
     width="100%"
-    height="<?php echo $maxDepth * 16 ?>"
+    height="<?php echo $data['max_depth'] * 16 ?>"
     preserveAspectRatio="none"
     >
     <style>
@@ -210,7 +146,7 @@ function printTree(array $events, int $level = 0) {
     Event.prototype.setParent = function(parent) {
       this.parent = parent;
     }
-    var a = <?php echo json_encode(['strings' => $strings, 'events' => $roots]); ?>;
+    var a = <?php echo json_encode($data); ?>;
     function createTree(ev) {
       var r = new Event(ev.attributes);
       for (var i = 0; i < ev.children.length; i++) {
@@ -219,7 +155,7 @@ function printTree(array $events, int $level = 0) {
       return r;
     }
     var t = window.performance.now();
-    var tree = createTree(a['events'][0])
+    var tree = createTree(a['roots'][0])
     console.log('tree created in ', window.performance.now() - t)
   </script>
 </body>
