@@ -1,4 +1,5 @@
 <?php
+chdir(dirname(__DIR__));
 
 require 'src/FunctionCallEvent.php';
 require 'src/Decoder.php';
@@ -22,7 +23,7 @@ $info = "Events: {$data['events_count']}, "
   . "Max depth: {$data['max_depth']}, "
   . "TS: {$data['ts']}, "
   . "TF: {$data['tf']}, "
-  ." Time to decode: {$data['time_to_decode']}";
+  . "Time to decode: {$data['time_to_decode']}";
 
 function printTree(array $events, int $level = 0) {
   if (!$events) {return;}
