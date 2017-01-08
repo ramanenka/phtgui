@@ -42,7 +42,9 @@ $info = "Events: {$data['events_count']}, "
     <style>
       text { font-size: 10px; fill: #FFFFFF; }
       rect { fill: #00545C; }
-      g#fcs g.function-call-event:hover {opacity: 0.5; cursor:pointer;}
+      g#fcs g.function-call-event:hover, g#fcs g.function-call-event.selected {
+        opacity: 0.5; cursor:pointer;
+      }
     </style>
     <g id="fcs"></g>
   </svg>
