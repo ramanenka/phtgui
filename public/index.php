@@ -71,29 +71,7 @@ function printTree(array $events, int $level = 0) {
     <?php //printTree($roots); ?>
   </svg>
   <script type="text/javascript">
-    function Event(attrs) {
-      this.attrs = attrs;
-      this.parent = null;
-      this.children = [];
-    }
-    Event.prototype.addChild = function(child) {
-      this.children.push(child);
-      child.setParent(this);
-    }
-    Event.prototype.setParent = function(parent) {
-      this.parent = parent;
-    }
-    var a = <?php echo json_encode($data); ?>;
-    function createTree(ev) {
-      var r = new Event(ev.attributes);
-      for (var i = 0; i < ev.children.length; i++) {
-        r.addChild(createTree(ev.children[i]))
-      }
-      return r;
-    }
-    var t = window.performance.now();
-    var tree = createTree(a['roots'][0])
-    console.log('tree created in ', window.performance.now() - t)
+    var data = <?php echo json_encode($data); ?>;
   </script>
 </body>
 </html>
