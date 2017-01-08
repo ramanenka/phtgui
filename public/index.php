@@ -25,31 +25,6 @@ $info = "Events: {$data['events_count']}, "
   . "TF: {$data['tf']}, "
   . "Time to decode: {$data['time_to_decode']}";
 
-function printTree(array $events, int $level = 0) {
-  if (!$events) {return;}
-  global $ts, $tw;
-  foreach ($events as $event) {
-    $ets = ($event->getData('tsc_start') - $ts) / $tw * 100;
-    $etf = ($event->getData('tsc_end') - $ts) / $tw * 100;
-    if ($etf - $ets < 0.0005 * 100) {
-      continue;
-    }
-    ?><g>
-      <rect  x="<?php echo $ets ?>%"
-        y="<?php echo $level * 16 ?>"
-        width="<?php echo $etf - $ets ?>%"
-        height="<?php echo 15 ?>"
-        fill="#00545C"
-        ></rect>
-      <text
-        x="<?php echo $ets ?>%"
-        y="<?php echo $level * 16 + 11 ?>"
-        ><tspan dx="5"><?php echo $event->getName(); ?></tspan></text>
-        <?php printTree($event->getChildren(), $level + 1); ?>
-      </g><?php
-  }
-}
-
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -66,12 +41,15 @@ function printTree(array $events, int $level = 0) {
     >
     <style>
       text { font-size: 10px; fill: #FFFFFF; }
-      /*rect { fill: none; stroke: #add8e6; }*/
+      rect { fill: #00545C; }
     </style>
-    <?php //printTree($roots); ?>
+    <g id="fcs"></g>
   </svg>
+  <script type="text/javascript" src="js.js"></script>
   <script type="text/javascript">
+    const SVG_NS = 'http://www.w3.org/2000/svg';
     var data = <?php echo json_encode($data); ?>;
+    renderTree(document.getElementById('fcs'), data);
   </script>
 </body>
 </html>

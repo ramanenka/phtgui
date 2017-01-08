@@ -47,6 +47,6 @@ class FunctionCallEvent implements JsonSerializable
   }
 
   public function jsonSerialize() {
-    return ['attributes' => $this->data, 'children' => $this->children];
+    return $this->data + ['children' => $this->children];
   }
 }
