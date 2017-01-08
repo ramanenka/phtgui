@@ -42,6 +42,7 @@ $info = "Events: {$data['events_count']}, "
     <style>
       text { font-size: 10px; fill: #FFFFFF; }
       rect { fill: #00545C; }
+      g#fcs g.function-call-event:hover {opacity: 0.5; cursor:pointer;}
     </style>
     <g id="fcs"></g>
   </svg>
@@ -49,6 +50,7 @@ $info = "Events: {$data['events_count']}, "
   <script type="text/javascript">
     const SVG_NS = 'http://www.w3.org/2000/svg';
     var data = <?php echo json_encode($data); ?>;
+    data.short_strings = {};
     renderTree(document.getElementById('fcs'), data);
   </script>
 </body>
