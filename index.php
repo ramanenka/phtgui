@@ -2,18 +2,6 @@
 
 require 'src/Decoder.php';
 
-function chop1(string $string, string $char) {
-  $i = strlen($string);
-  $c = 2;
-  while ($c > 0 && --$i >= 0) {
-    if ($string[$i] == $char) {
-      $c--;
-    }
-  }
-
-  return $i == 0 ? $string : substr($string, $i + 1);
-}
-
 class FunctionCallEvent implements JsonSerializable
 {
   protected $data;
@@ -41,7 +29,7 @@ class FunctionCallEvent implements JsonSerializable
     $result = "";
 
     if (!empty($this->data['class_name_id'])) {
-      $result .= chop1($strings[$this->data['class_name_id']], '\\') . '::';
+      $result .= $strings[$this->data['class_name_id']] . '::';
     }
 
     if (!empty($this->data['function_name_id'])) {
@@ -49,7 +37,7 @@ class FunctionCallEvent implements JsonSerializable
     }
 
     if (!$result) {
-      $result = chop1($strings[$this->data['filename_id']], '/')
+      $result = $strings[$this->data['filename_id']]
         . ':' . $this->data['line_start'];
     }
 
