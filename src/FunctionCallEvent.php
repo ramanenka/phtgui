@@ -22,26 +22,6 @@ class FunctionCallEvent implements JsonSerializable
     return $this->children;
   }
 
-  public function getName() {
-    global $strings;
-    $result = "";
-
-    if (!empty($this->data['class_name_id'])) {
-      $result .= $strings[$this->data['class_name_id']] . '::';
-    }
-
-    if (!empty($this->data['function_name_id'])) {
-      $result .= $strings[$this->data['function_name_id']];
-    }
-
-    if (!$result) {
-      $result = $strings[$this->data['filename_id']]
-        . ':' . $this->data['line_start'];
-    }
-
-    return $result;
-  }
-
   public function addChild(FunctionCallEvent $f) {
     $this->children[] = $f;
   }
