@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', -1);
 chdir(dirname(__DIR__));
 
 require 'src/FunctionCallEvent.php';

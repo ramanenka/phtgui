@@ -17,7 +17,6 @@ class Decoder {
 
       switch($evType) {
         case 3:
-          $ev = [];
           $ev = unpack(
             "@$p/"
             .'Qtsc_start/'
@@ -27,7 +26,30 @@ class Decoder {
             .'Lline_start',
             $content
           );
+          $ev['internal'] = false;
           $p += 8 + 4 * 4;
+
+          $o = new FunctionCallEvent($ev);
+          if ($stack) {
+            $stack[count($stack) - 1]->addChild($o);
+          } else {
+            $roots[] = $o;
+          }
+
+          array_push($stack, $o);
+          $maxDepth = count($stack) > $maxDepth ? count($stack) : $maxDepth;
+
+          break;
+        case 6:
+          $ev = unpack(
+            "@$p/"
+            .'Qtsc_start/'
+            .'Lfunction_name_id/'
+            .'Lclass_name_id/',
+            $content
+          );
+          $ev['internal'] = true;
+          $p += 8 + 2 * 4;
 
           $o = new FunctionCallEvent($ev);
           if ($stack) {
