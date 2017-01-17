@@ -84,8 +84,15 @@ function updateEventText(ev, x, y, w) {
       name += data.strings[ev.function_name_id];
     }
     if (!name) {
-      name = shortString(ev.filename_id, '/') + ':' + ev.line_start;
+      name = shortString(ev.filename_id, '/');
+      if (ev.compile) {
+        name = 'COMPILE:' + name;
+      } else {
+        name = name + ':' + ev.line_start;
+      }
     }
+
+
 
     var tspan = document.createElementNS(SVG_NS, 'tspan');
     tspan.textContent = name;

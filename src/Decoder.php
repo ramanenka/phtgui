@@ -62,6 +62,29 @@ class Decoder {
           $maxDepth = count($stack) > $maxDepth ? count($stack) : $maxDepth;
 
           break;
+        case 7:
+          $ev = unpack(
+            "@$p/"
+            .'Qtsc_start/'
+            .'Lfilename_id/'
+            .'L_dummy',
+            $content
+          );
+          unset($ev['_dummy']);
+          $ev['compile'] = true;
+          $p += 8 + 4 + 4;
+
+          $o = new FunctionCallEvent($ev);
+          if ($stack) {
+            $stack[count($stack) - 1]->addChild($o);
+          } else {
+            $roots[] = $o;
+          }
+
+          array_push($stack, $o);
+          $maxDepth = count($stack) > $maxDepth ? count($stack) : $maxDepth;
+
+          break;
 
         case 4:
           $ev = unpack("@$p/Qtsc_end", $content);
@@ -79,7 +102,7 @@ class Decoder {
           break;
 
         default:
-          echo "unknown event type => $evType, exiting...\n";
+          echo "unknown event type => $evType, p => $p exiting...\n";
           exit;
           break;
       }

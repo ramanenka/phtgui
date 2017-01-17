@@ -18,12 +18,14 @@ $data = $decoder->decode($content);
 
 $rootsCount = count($data['roots']);
 $stringsCount = count($data['strings']);
+$ts = number_format($data['ts']);
+$tf = number_format($data['tf']);
 $info = "Events: {$data['events_count']}, "
   . "Roots: {$rootsCount}, "
   . "Strings: {$stringsCount}, "
   . "Max depth: {$data['max_depth']}, "
-  . "TS: {$data['ts']}, "
-  . "TF: {$data['tf']}, "
+  . "TS: {$ts}, "
+  . "TF: {$tf}, "
   . "Time to decode: {$data['time_to_decode']}";
 
 ?><!DOCTYPE html>
