@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"encoding/binary"
 	"fmt"
+	"html/template"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
@@ -42,7 +44,7 @@ type eventEnd struct {
 	Tsc uint64
 }
 
-func main() {
+func decode() {
 	t0 := time.Now()
 	var eventsCount uint64
 	events := make([]interface{}, 0, 1E6)
@@ -98,4 +100,28 @@ func main() {
 	fmt.Printf("The call took %v to run.\n", t1.Sub(t0))
 	fmt.Println("Events count: ", eventsCount)
 	fmt.Println("Events without strings: ", len(events))
+}
+
+func main() {
+	http.Handle("/static/",
+		http.StripPrefix("/static/",
+			http.FileServer(http.Dir("./public")),
+		),
+	)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		t, err := template.ParseFiles("index.gohtml")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = t.Execute(w, nil)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
+
+	http.ListenAndServe(":8080", nil)
 }
