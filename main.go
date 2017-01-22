@@ -53,6 +53,7 @@ func decode() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 
 	r := bufio.NewReader(file)
 	var ev byte
