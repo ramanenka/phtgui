@@ -6,7 +6,7 @@
   </style>
 </head>
 <body>
-  <div></div>
+  <div id="root"></div>
   <svg xmlns="http://www.w3.org/2000/svg"
     width="100%"
     height="<?php echo $data['max_depth'] * 16 ?>"
@@ -21,7 +21,7 @@
     </style>
     <g id="fcs"></g>
   </svg>
-  <script type="text/javascript" src="static/js.js"></script>
+  <script type="text/javascript" src="static/bundle.js"></script>
   <script type="text/javascript">
     const SVG_NS = 'http://www.w3.org/2000/svg';
     //var data = <?php echo json_encode($data); ?>;
