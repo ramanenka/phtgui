@@ -19,18 +19,14 @@ class FilterableTracesList extends React.Component {
 }
 
 const FilterableTracesListConnected = connect(
-  state => {
-    return {
-      traces: state.tracesList.traces
-    }
-  },
-  dispatch => {
-    return {
+  state => ({
+    traces: state.tracesList.traces
+  }),
+  dispatch => ({
       onRefreshClick: () => {
         dispatch(fetchTraces())
       }
-    }
-  }
+  })
 )(FilterableTracesList)
 
 export default FilterableTracesListConnected
