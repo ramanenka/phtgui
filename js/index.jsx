@@ -1,19 +1,29 @@
 import React from 'react'
 import {render} from 'react-dom'
-import {createStore} from 'redux'
+import {createStore, applyMiddleware} from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import createLogger from 'redux-logger'
 import {Provider} from 'react-redux'
 import {Router, Route, hashHistory} from 'react-router'
-import FilterableTracesList from './FilterableTracesList.jsx'
+import FilterableTracesListConnected from './FilterableTracesList.jsx'
 import Trace from './Trace.jsx'
 import AppReducer from './reducers/index.js'
-import {TracesDataList} from './traces.data.js'
+import {fetchTraces} from './actions.js'
 
-let store = createStore(AppReducer)
+let store = createStore(
+  AppReducer,
+  applyMiddleware(
+    thunkMiddleware,
+    createLogger()
+  )
+)
+
+store.dispatch(fetchTraces())
 
 render(
   <Provider store={store}>
     <Router history={hashHistory}>
-      <Route path="/" component={FilterableTracesList} traces={TracesDataList}/>
+      <Route path="/" component={FilterableTracesListConnected} />
       <Route path="/traces/(:traceId)" component={Trace} />
     </Router>
   </Provider>,

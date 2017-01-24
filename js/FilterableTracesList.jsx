@@ -1,10 +1,13 @@
 import React from 'react'
 import {Link} from 'react-router'
+import {connect} from 'react-redux'
+import {fetchTraces} from './actions.js'
 
 class FilterableTracesList extends React.Component {
   render() {
     return (<div>
-      {this.props.route.traces.map(trace => {
+      <div onClick={this.props.onRefreshClick}>Refresh</div>
+      {this.props.traces.map(trace => {
         return (
           <div key={trace.id}>
             <Link to={'/traces/' + trace.id}>{trace.name}</Link>
@@ -15,4 +18,19 @@ class FilterableTracesList extends React.Component {
   }
 }
 
-export default FilterableTracesList
+const FilterableTracesListConnected = connect(
+  state => {
+    return {
+      traces: state.tracesList.traces
+    }
+  },
+  dispatch => {
+    return {
+      onRefreshClick: () => {
+        dispatch(fetchTraces())
+      }
+    }
+  }
+)(FilterableTracesList)
+
+export default FilterableTracesListConnected

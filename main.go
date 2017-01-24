@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -122,6 +123,15 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	})
+
+	http.HandleFunc("/api/v1/traces", func(w http.ResponseWriter, r *http.Request) {
+		data := [...]map[string]interface{}{
+			map[string]interface{}{"id": "id1", "name": "/index.php?filter=1", "timestamp": "2017-01-21 15:15:15:0.0001", "wt": 123123},
+			map[string]interface{}{"id": "id2", "name": "/index.php?filter=2", "timestamp": "2017-01-21 15:16:15:0.0002", "wt": 223123},
+			map[string]interface{}{"id": "id3", "name": "/index.php?filter=3", "timestamp": "2017-01-21 15:17:15:0.0003", "wt": 323123},
+		}
+		json.NewEncoder(w).Encode(data)
 	})
 
 	http.ListenAndServe(":8080", nil)
