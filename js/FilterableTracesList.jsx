@@ -1,7 +1,7 @@
 import React from 'react'
 import {Link} from 'react-router'
 import {connect} from 'react-redux'
-import {fetchTraces} from './actions.js'
+import {fetchTraces} from './actions'
 
 class FilterableTracesList extends React.Component {
   render() {

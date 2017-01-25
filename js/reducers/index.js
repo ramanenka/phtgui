@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux'
-import {TRACES_REQUEST, TRACES_RECEIVE} from '../actions.js'
+import {TRACES_REQUEST, TRACES_RECEIVE} from '../actions'
 
 function tracesList(state = {isFetching: false, traces: []}, action) {
   switch(action.type) {

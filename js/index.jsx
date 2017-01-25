@@ -5,10 +5,10 @@ import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
 import {Provider} from 'react-redux'
 import {Router, Route, hashHistory} from 'react-router'
-import FilterableTracesListConnected from './FilterableTracesList.jsx'
-import Trace from './Trace.jsx'
-import AppReducer from './reducers/index.js'
-import {fetchTraces} from './actions.js'
+import FilterableTracesListConnected from './FilterableTracesList'
+import Trace from './Trace'
+import AppReducer from './reducers/index'
+import {fetchTraces} from './actions'
 
 let store = createStore(
   AppReducer,
