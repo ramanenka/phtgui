@@ -5,6 +5,7 @@ import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
 import {Provider} from 'react-redux'
 import {Router, Route, hashHistory} from 'react-router'
+import {syncHistoryWithStore} from 'react-router-redux'
 import TracesList from './components/traces-list/traces-list'
 import Trace from './Trace'
 import AppReducer from './reducers/index'
@@ -17,12 +18,11 @@ let store = createStore(
     createLogger()
   )
 )
-
-store.dispatch(fetchTraces())
+const history = syncHistoryWithStore(hashHistory, store)
 
 render(
   <Provider store={store}>
-    <Router history={hashHistory}>
+    <Router history={history}>
       <Route path="/" component={TracesList} />
       <Route path="/traces/(:traceId)" component={Trace} />
     </Router>
