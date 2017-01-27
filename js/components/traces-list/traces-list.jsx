@@ -3,10 +3,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {fetchTraces} from '../../actions'
 
-let TracesList = function({traces, shouldRefetch, onRefreshClick, onNoTraces}) {
-  if (shouldRefetch) {
-    onNoTraces();
-  }
+let TracesList = function({traces, onRefreshClick}) {
   return (
     <div>
       <div onClick={onRefreshClick}>Refresh</div>
@@ -17,16 +14,12 @@ let TracesList = function({traces, shouldRefetch, onRefreshClick, onNoTraces}) {
 
 TracesList = connect(
   state => ({
-    traces: state.tracesList.traces,
-    shouldRefetch: state.tracesList.isInvalidated && !state.tracesList.isFetching
+    traces: state.tracesList.traces
   }),
   dispatch => ({
-      onRefreshClick: () => {
-        dispatch(fetchTraces())
-      },
-      onNoTraces: () => {
-        dispatch(fetchTraces())
-      }
+    onRefreshClick: () => {
+      dispatch(fetchTraces())
+    }
   })
 )(TracesList)
 

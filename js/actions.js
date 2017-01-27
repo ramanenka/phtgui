@@ -26,3 +26,17 @@ export function fetchTraces() {
       .catch(e => console.log(e))
   }
 }
+
+function shouldFetchTraces(state) {
+  return state.tracesList.isInvalidated && !state.tracesList.isFetching
+}
+
+export function fetchTracesIfNeeded() {
+  return (dispatch, getState) => {
+    if (shouldFetchTraces(getState())) {
+      return dispatch(fetchTraces())
+    } else {
+      return Promise.resolve()
+    }
+  }
+}

@@ -20,7 +20,7 @@ const history = syncHistoryWithStore(hashHistory, store)
 
 render(
   <Provider store={store}>
-    {createRouter(history)}
+    {createRouter(store, history)}
   </Provider>,
   document.getElementById('root')
 )
