@@ -7,4 +7,5 @@ before_install:
   - docker build -t vadd/phtgui .
 
 script:
+  - pwd
   - npm run test
