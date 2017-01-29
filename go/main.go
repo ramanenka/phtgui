@@ -22,28 +22,33 @@ const (
 	EventTypeEnd         byte = 4
 )
 
-type eventCompileFile struct {
-	Tsc        uint64
+type eventDataString struct {
+	id    uint32
+	value string
+}
+
+type eventCompileFileBegin struct {
+	TscBegin   uint64
 	FilenameID uint32
 	_          uint32
 }
 
-type eventCall struct {
-	Tsc            uint64
+type eventCallBegin struct {
+	TscBegin       uint64
 	FilenameID     uint32
 	FunctionNameID uint32
 	ClassNameID    uint32
 	LineStart      uint32
 }
 
-type eventICall struct {
-	Tsc            uint64
+type eventICallBegin struct {
+	TscBegin       uint64
 	FunctionNameID uint32
 	ClassNameID    uint32
 }
 
 type eventEnd struct {
-	Tsc uint64
+	TscEnd uint64
 }
 
 func walk(file *os.File) chan interface{} {
@@ -67,24 +72,24 @@ func walk(file *os.File) chan interface{} {
 
 			switch ev {
 			case EventTypeDataString:
-				var stringID uint32
-				binary.Read(r, binary.LittleEndian, &stringID)
+				var e eventDataString
+				binary.Read(r, binary.LittleEndian, &e.id)
 				bytesStr, _ := r.ReadBytes(0)
-				str := string(bytesStr)
-				_ = str
-				//fmt.Println("EVENT_DATA_STRING: string id =", stringID, "string =", str)
+				e.value = string(bytesStr)
+				ch <- &e
+
 			case EventTypeCompileFile:
-				var e eventCompileFile
+				var e eventCompileFileBegin
 				binary.Read(r, binary.LittleEndian, &e)
 				ch <- &e
 
 			case EventTypeCall:
-				var e eventCall
+				var e eventCallBegin
 				binary.Read(r, binary.LittleEndian, &e)
 				ch <- &e
 
 			case EventTypeICall:
-				var e eventICall
+				var e eventICallBegin
 				binary.Read(r, binary.LittleEndian, &e)
 				ch <- &e
 
@@ -97,7 +102,6 @@ func walk(file *os.File) chan interface{} {
 				log.Fatal("Unknown event type: ", ev)
 			}
 		}
-
 	}(file, result)
 	return result
 }
