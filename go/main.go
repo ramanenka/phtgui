@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -11,100 +10,9 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/vadd/phtgui/stream"
 )
-
-// Constants designate event type
-const (
-	EventTypeCall        byte = 3
-	EventTypeICall       byte = 6
-	EventTypeDataString  byte = 5
-	EventTypeCompileFile byte = 7
-	EventTypeEnd         byte = 4
-)
-
-type eventDataString struct {
-	id    uint32
-	value string
-}
-
-type eventCompileFileBegin struct {
-	TscBegin   uint64
-	FilenameID uint32
-	_          uint32
-}
-
-type eventCallBegin struct {
-	TscBegin       uint64
-	FilenameID     uint32
-	FunctionNameID uint32
-	ClassNameID    uint32
-	LineStart      uint32
-}
-
-type eventICallBegin struct {
-	TscBegin       uint64
-	FunctionNameID uint32
-	ClassNameID    uint32
-}
-
-type eventEnd struct {
-	TscEnd uint64
-}
-
-func walk(file *os.File) chan interface{} {
-	result := make(chan interface{}, 1000)
-	go func(file *os.File, ch chan interface{}) {
-		// f, err := os.Create("/traces/goprof.prof")
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// pprof.StartCPUProfile(f)
-		// defer pprof.StopCPUProfile()
-		r := bufio.NewReader(file)
-
-		var ev byte
-		for {
-			err := binary.Read(r, binary.LittleEndian, &ev)
-			if err != nil {
-				close(ch)
-				break
-			}
-
-			switch ev {
-			case EventTypeDataString:
-				var e eventDataString
-				binary.Read(r, binary.LittleEndian, &e.id)
-				bytesStr, _ := r.ReadBytes(0)
-				e.value = string(bytesStr)
-				ch <- &e
-
-			case EventTypeCompileFile:
-				var e eventCompileFileBegin
-				binary.Read(r, binary.LittleEndian, &e)
-				ch <- &e
-
-			case EventTypeCall:
-				var e eventCallBegin
-				binary.Read(r, binary.LittleEndian, &e)
-				ch <- &e
-
-			case EventTypeICall:
-				var e eventICallBegin
-				binary.Read(r, binary.LittleEndian, &e)
-				ch <- &e
-
-			case EventTypeEnd:
-				var e eventEnd
-				binary.Read(r, binary.LittleEndian, &e)
-				ch <- &e
-
-			default:
-				log.Fatal("Unknown event type: ", ev)
-			}
-		}
-	}(file, result)
-	return result
-}
 
 func decode() {
 	t0 := time.Now()
@@ -114,7 +22,7 @@ func decode() {
 	}
 	defer file.Close()
 
-	for e := range walk(file) {
+	for e := range stream.Iterate(bufio.NewReader(file)) {
 		_ = e
 	}
 
