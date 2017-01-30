@@ -10,7 +10,6 @@ RUN go install github.com/vadd/phtgui
 
 COPY *.gohtml ./
 COPY .babelrc webpack.config.js ./
-COPY public public
 COPY js js
 
 RUN npm run build
