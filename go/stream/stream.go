@@ -7,16 +7,26 @@ import (
 )
 
 const (
-	EventTypeCall        byte = 3
-	EventTypeICall       byte = 6
-	EventTypeDataString  byte = 5
-	EventTypeCompileFile byte = 7
-	EventTypeEnd         byte = 4
+	EventTypeRequestBegin byte = 1
+	EventTypeRequestEnd   byte = 2
+	EventTypeCall         byte = 3
+	EventTypeICall        byte = 6
+	EventTypeDataString   byte = 5
+	EventTypeCompileFile  byte = 7
+	EventTypeEnd          byte = 4
 )
 
 type EventDataString struct {
 	Id    uint32
 	Value string
+}
+
+type EventRequestBegin struct {
+	TscBegin uint64
+}
+
+type EventRequestEnd struct {
+	TscEnd uint64
 }
 
 type EventCompileFileBegin struct {
@@ -60,6 +70,16 @@ func Iterate(r *bufio.Reader) chan interface{} {
 				binary.Read(r, binary.LittleEndian, &e.Id)
 				bytesStr, _ := r.ReadBytes(0)
 				e.Value = string(bytesStr)
+				ch <- e
+
+			case EventTypeRequestBegin:
+				var e EventRequestBegin
+				binary.Read(r, binary.LittleEndian, &e)
+				ch <- e
+
+			case EventTypeRequestEnd:
+				var e EventRequestEnd
+				binary.Read(r, binary.LittleEndian, &e)
 				ch <- e
 
 			case EventTypeCompileFile:
