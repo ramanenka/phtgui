@@ -69,7 +69,7 @@ func Iterate(r *bufio.Reader) chan interface{} {
 				var e EventDataString
 				binary.Read(r, binary.LittleEndian, &e.Id)
 				bytesStr, _ := r.ReadBytes(0)
-				e.Value = string(bytesStr)
+				e.Value = string(bytesStr[:len(bytesStr) - 1])
 				ch <- e
 
 			case EventTypeRequestBegin:

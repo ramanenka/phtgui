@@ -1,33 +1,23 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"time"
 
-	"github.com/vadd/phtgui/stream"
+	"github.com/vadd/phtgui/trace"
 )
 
-func decode() {
+func decode() *trace.Trace {
 	t0 := time.Now()
-	file, err := os.Open("/traces/phtrace.phtrace")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	for e := range stream.Iterate(bufio.NewReader(file)) {
-		_ = e
-	}
-
+	t := trace.NewTrace("/traces/phtrace.phtrace")
+	t.LoadTree()
 	t1 := time.Now()
-	fmt.Printf("The call took %v to run.\n", t1.Sub(t0))
+	fmt.Printf("Decode took %v to run.\n", t1.Sub(t0))
+	return t
 }
 
 func main() {
@@ -66,9 +56,11 @@ func main() {
 	})
 
 	http.HandleFunc("/ololo", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Decoding events")
-		decode()
-		fmt.Fprintln(w, "Done!")
+		t := decode()
+		t0 := time.Now()
+		json.NewEncoder(w).Encode(t)
+		t1 := time.Now()
+		fmt.Printf("JSON encode took %v to run.\n", t1.Sub(t0))
 	})
 
 	http.ListenAndServe(":8080", nil)
