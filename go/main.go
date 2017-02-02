@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/vadd/phtgui/trace"
+	"github.com/gorilla/mux"
 )
 
 func decode() *trace.Trace {
@@ -21,13 +22,12 @@ func decode() *trace.Trace {
 }
 
 func main() {
-	http.Handle("/static/",
-		http.StripPrefix("/static/",
-			http.FileServer(http.Dir("./public")),
-		),
+	r := mux.NewRouter()
+  r.PathPrefix("/static/").Handler(
+		http.StripPrefix("/static/", http.FileServer(http.Dir("./public"))),
 	)
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		t, err := template.ParseFiles("index.gohtml")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,7 +41,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/api/v1/traces", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v1/traces", func(w http.ResponseWriter, r *http.Request) {
 		matches, _ := filepath.Glob("/traces/*.phtrace")
 		data := make([]map[string]interface{}, 0, len(matches))
 		for _, match := range matches {
@@ -55,7 +55,7 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 
-	http.HandleFunc("/ololo", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/ololo", func(w http.ResponseWriter, r *http.Request) {
 		t := decode()
 		t0 := time.Now()
 		json.NewEncoder(w).Encode(t)
@@ -63,5 +63,5 @@ func main() {
 		fmt.Printf("JSON encode took %v to run.\n", t1.Sub(t0))
 	})
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", r)
 }

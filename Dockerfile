@@ -5,6 +5,7 @@ RUN apt-get install -y nodejs
 COPY package.json ./
 RUN npm i
 
+RUN go get -u github.com/gorilla/mux
 COPY go src/github.com/vadd/phtgui/
 RUN go install github.com/vadd/phtgui
 
