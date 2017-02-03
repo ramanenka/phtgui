@@ -12,15 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func decode() *trace.Trace {
-	t0 := time.Now()
-	t := trace.NewTrace("/traces/phtrace.phtrace")
-	t.LoadTree()
-	t1 := time.Now()
-	fmt.Printf("Decode took %v to run.\n", t1.Sub(t0))
-	return t
-}
-
 func main() {
 	r := mux.NewRouter()
   r.PathPrefix("/static/").Handler(
@@ -56,7 +47,8 @@ func main() {
 	})
 
 	r.HandleFunc("/api/v1/traces/{traceId}/tree", func(w http.ResponseWriter, r *http.Request) {
-		t := decode()
+		t := trace.NewTrace("/traces/phtrace.phtrace")
+		t.LoadTree()
 
 		var threshold uint64 = t.RequestEvent.GetDuration() / 100
 
