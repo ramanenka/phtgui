@@ -3,31 +3,16 @@
 <head>
   <style>
     html, body {height: 100%;}
+
+    text { font-size: 10px; fill: #FFFFFF; }
+    rect { fill: #00545C; }
+    g:hover, g.selected {
+      opacity: 0.5; cursor:pointer;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
-  <!-- height="<?php echo $data['max_depth'] * 16 ?>" -->
-  <svg xmlns="http://www.w3.org/2000/svg"
-    width="100%"
-    height=""
-    preserveAspectRatio="none"
-    >
-    <style>
-      text { font-size: 10px; fill: #FFFFFF; }
-      rect { fill: #00545C; }
-      g#fcs g.function-call-event:hover, g#fcs g.function-call-event.selected {
-        opacity: 0.5; cursor:pointer;
-      }
-    </style>
-    <g id="fcs"></g>
-  </svg>
   <script type="text/javascript" src="static/bundle.js"></script>
-  <script type="text/javascript">
-    const SVG_NS = 'http://www.w3.org/2000/svg';
-    //var data = <?php echo json_encode($data); ?>;
-    //data.short_strings = {};
-    //renderTree(document.getElementById('fcs'), data);
-  </script>
 </body>
 </html>
