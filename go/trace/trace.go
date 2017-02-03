@@ -44,7 +44,7 @@ func (t *Trace) LoadTree() {
 			e.TscBegin = s.TscBegin
 			e.FilenameID = s.FilenameID
 
-			stack.probe().addChild(&e)
+			stack.probe().AddChild(&e)
 			stack.push(&e)
 
 		case stream.EventCallBegin:
@@ -55,7 +55,7 @@ func (t *Trace) LoadTree() {
 			e.ClassNameID = s.ClassNameID
 			e.LineStart = s.LineStart
 
-			stack.probe().addChild(&e)
+			stack.probe().AddChild(&e)
 			stack.push(&e)
 
 		case stream.EventICallBegin:
@@ -64,7 +64,7 @@ func (t *Trace) LoadTree() {
 			e.FunctionNameID = s.FunctionNameID
 			e.ClassNameID = s.ClassNameID
 
-			stack.probe().addChild(&e)
+			stack.probe().AddChild(&e)
 			stack.push(&e)
 
 		case stream.EventEnd:

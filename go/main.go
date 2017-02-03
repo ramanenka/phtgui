@@ -55,10 +55,29 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 
-	r.HandleFunc("/ololo", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v1/traces/{traceId}/tree", func(w http.ResponseWriter, r *http.Request) {
 		t := decode()
+
+		var threshold uint64 = t.RequestEvent.GetDuration() / 100
+
+		var walker func (source trace.Event) trace.Event
+		walker = func (source trace.Event) trace.Event {
+			var dest trace.Event
+			if source.GetDuration() > threshold {
+				dest = source.Clone()
+				for _, sourceChild := range source.GetChildren() {
+					destChild := walker(sourceChild)
+					if destChild != nil {
+						dest.AddChild(destChild)
+					}
+				}
+			}
+			return dest
+		}
+		dest := walker(t.RequestEvent)
+
 		t0 := time.Now()
-		json.NewEncoder(w).Encode(t)
+		json.NewEncoder(w).Encode(dest)
 		t1 := time.Now()
 		fmt.Printf("JSON encode took %v to run.\n", t1.Sub(t0))
 	})
