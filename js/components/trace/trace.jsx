@@ -5,8 +5,7 @@ class Trace extends React.Component {
   render() {
     return (
       <div>
-        <div>This is trace info of "{this.props.params.traceId}"</div>
-        <div><Link to={'/'}>Back</Link></div>
+        This is trace info of "{this.props.params.traceId}"
       </div>
     )
   }
