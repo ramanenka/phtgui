@@ -6,7 +6,7 @@ import createLogger from 'redux-logger'
 import {Provider} from 'react-redux'
 import {hashHistory} from 'react-router'
 import {syncHistoryWithStore} from 'react-router-redux'
-import AppReducer from './reducers/index'
+import AppReducer from './reducers/app-reducer'
 import createRouter from './router'
 
 let store = createStore(

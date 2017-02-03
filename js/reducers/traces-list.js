@@ -1,8 +1,6 @@
-import {combineReducers} from 'redux'
-import {routerReducer} from 'react-router-redux'
-import {TRACES_REQUEST, TRACES_RECEIVE} from '../actions'
+import {TRACES_REQUEST, TRACES_RECEIVE} from '../actions/traces-list'
 
-function tracesList(
+export function tracesList(
   state = {isFetching: false, traces: [], isInvalidated: true},
   action
 ) {
@@ -19,10 +17,3 @@ function tracesList(
       return state
   }
 }
-
-const AppReducer = combineReducers({
-  tracesList,
-  routing: routerReducer
-})
-
-export default AppReducer
