@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
-	"time"
 	"strings"
 
 	"github.com/vadd/phtgui/trace"
@@ -49,7 +48,10 @@ func main() {
 	})
 
 	r.HandleFunc("/api/v1/traces/{traceId}/tree", func(w http.ResponseWriter, r *http.Request) {
-		t := trace.NewTrace("/traces/phtrace.phtrace")
+		vars := mux.Vars(r)
+		traceId := vars["traceId"]
+
+		t := trace.NewTrace(fmt.Sprintf("/traces/%s.phtrace", traceId))
 		t.LoadTree()
 
 		var threshold uint64 = t.RequestEvent.GetDuration() / 100
@@ -68,12 +70,9 @@ func main() {
 			}
 			return dest
 		}
-		dest := walker(t.RequestEvent)
 
-		t0 := time.Now()
+		dest := walker(t.RequestEvent)
 		json.NewEncoder(w).Encode(dest)
-		t1 := time.Now()
-		fmt.Printf("JSON encode took %v to run.\n", t1.Sub(t0))
 	})
 
 	http.ListenAndServe(":8080", r)
