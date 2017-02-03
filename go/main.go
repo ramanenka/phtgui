@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
+	"strings"
 
 	"github.com/vadd/phtgui/trace"
 	"github.com/gorilla/mux"
@@ -37,7 +38,8 @@ func main() {
 		data := make([]map[string]interface{}, 0, len(matches))
 		for _, match := range matches {
 			m := map[string]interface{}{}
-			m["id"] = filepath.Base(match)
+			basename := filepath.Base(match)
+			m["id"] = strings.TrimSuffix(basename, filepath.Ext(basename))
 			m["name"] = m["id"]
 			m["wt"] = -1
 			m["timestamp"] = "2017-01-21 15:15:15:0.0001"
