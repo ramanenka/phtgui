@@ -1,4 +1,4 @@
-import {FLAME_TREE_REQUEST, FLAME_TREE_RECEIVE} from '../../actions/trace/flame'
+import {FLAME_TREE_REQUEST, FLAME_TREE_RECEIVE} from './actions'
 
 export function flame(state = {isFetching: false, tree: false}, action) {
   switch (action.type) {

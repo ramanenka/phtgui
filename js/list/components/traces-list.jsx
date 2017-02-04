@@ -1,7 +1,7 @@
 import Table from './table'
 import React from 'react'
 import {connect} from 'react-redux'
-import {fetchTraces} from '../../actions/traces-list'
+import {fetchTraces} from '../actions'
 
 let TracesList = function({traces, onRefreshClick}) {
   return (

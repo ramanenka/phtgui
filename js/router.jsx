@@ -1,12 +1,12 @@
 import React from 'react'
 import {Router, Route, IndexRoute} from 'react-router'
-import TracesList from './components/traces-list/traces-list'
-import {fetchTracesIfNeeded} from './actions/traces-list'
+import TracesList from './list/components/traces-list'
+import {fetchTracesIfNeeded} from './list/actions'
 
-import Trace from './components/trace/trace'
-import TraceNav from './components/trace/nav'
-import Flame from './components/trace/flame'
-import {fetchFlameTree} from './actions/trace/flame'
+import Trace from './trace/components/trace'
+import TraceNav from './trace/components/nav'
+import Flame from './flame/components/flame'
+import {fetchFlameTree} from './flame/actions'
 
 export default function createRouter(store, history) {
   return (

@@ -1,4 +1,4 @@
-import {TRACES_REQUEST, TRACES_RECEIVE} from '../actions/traces-list'
+import {TRACES_REQUEST, TRACES_RECEIVE} from './actions'
 
 export function tracesList(
   state = {isFetching: false, traces: [], isInvalidated: true},
