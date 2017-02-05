@@ -1,18 +1,32 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
-class Bar extends React.Component {
+class BarBase extends React.Component {
   render() {
+    let {event, level, tscScale, tsc0} = this.props,
+      x = (event.TscBegin - tsc0) * tscScale,
+      y = level * 16,
+      width = (event.TscEnd - event.TscBegin) * tscScale,
+      clonedEvent = Object.assign({}, event, {Children: null})
+
+    delete clonedEvent.Children
+
+    let text = width > 5 ? <text x={x + "%"} y={y + 10}>{JSON.stringify(clonedEvent)}</text> : null
+
     return (<g>
-      <rect />
-      <text>
-        {JSON.stringify(
-          Object.assign({}, this.props.event, {Children: null})
-        )}
-      </text>
+      <rect x={x + "%"} y={y} width={width + "%"} height="15" rx="2" ry="2" />
+      {text}
     </g>)
   }
 }
+
+const Bar = connect(
+  state => ({
+    tscScale: 1 * 100 / (state.trace.flame.tscEnd - state.trace.flame.tscBegin),
+    tsc0: state.trace.flame.tscBegin
+  }),
+  dispatch => ({})
+)(BarBase)
 
 class FlameBase extends React.Component {
   render() {
@@ -20,17 +34,22 @@ class FlameBase extends React.Component {
       return (<div>Loading...</div>)
     }
 
-    let stack = [this.props.event]
     let bars = []
-    while (stack.length > 0) {
-      let event = stack.shift()
-      bars.push(<Bar key={event.TscBegin} event={event} />)
+    let maxLevel = 0
+    let traverse = (event, level = 0) => {
+      if (level > maxLevel) {
+        maxLevel = level
+      }
+      bars.push(<Bar key={event.TscBegin} level={level} event={event} />)
       if (event.Children) {
-        stack.push(...event.Children)
+        for (let child of event.Children) {
+          traverse(child, level + 1)
+        }
       }
     }
+    traverse(this.props.event)
 
-    return (<svg xmlns="http://www.w3.org/2000/svg" width="100%">
+    return (<svg xmlns="http://www.w3.org/2000/svg" width="100%" height={maxLevel * 16}>
       {bars}
     </svg>)
   }
