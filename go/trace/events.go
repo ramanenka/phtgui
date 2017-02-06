@@ -9,12 +9,13 @@ type Event interface {
 	hasChildren() bool
 	Clone() Event
 	GetDuration() uint64
+	GetStringIDs() []uint32
 }
 
 type EventBase struct {
-	TscBegin uint64
-	TscEnd   uint64
-	Children []Event
+	TscBegin uint64 `structs:"tsc_begin"`
+	TscEnd   uint64 `structs:"tsc_end"`
+	children []Event
 }
 
 func (e *EventBase) GetTscBegin() uint64 {
@@ -34,64 +35,80 @@ func (e *EventBase) GetDuration() uint64 {
 }
 
 func (e *EventBase) GetChildren() []Event {
-	return e.Children
+	return e.children
 }
 
 func (e *EventBase) AddChild(child Event) {
-	e.Children = append(e.Children, child)
+	e.children = append(e.children, child)
 }
 
 func (e *EventBase) hasChildren() bool {
-	return len(e.Children) != 0
+	return len(e.children) != 0
 }
 
 type EventRequest struct {
-	EventBase
+	EventBase `structs:",flatten"`
 }
 
 func (e *EventRequest) Clone() Event {
 	var result EventRequest
 	result = *e
-	result.Children = nil
+	result.children = nil
 	return &result
 }
 
+func (e *EventRequest) GetStringIDs() []uint32 {
+	return []uint32{}
+}
+
 type EventCompileFile struct {
-	EventBase
-	FilenameID uint32
+	EventBase         `structs:",flatten"`
+	FilenameID uint32 `structs:"filename_id"`
 }
 
 func (e *EventCompileFile) Clone() Event {
 	var result EventCompileFile
 	result = *e
-	result.Children = nil
+	result.children = nil
 	return &result
 }
 
+func (e *EventCompileFile) GetStringIDs() []uint32 {
+	return []uint32{e.FilenameID}
+}
+
 type EventCall struct {
-	EventBase
-	FilenameID     uint32
-	FunctionNameID uint32
-	ClassNameID    uint32
-	LineStart      uint32
+	EventBase             `structs:",flatten"`
+	FilenameID     uint32 `structs:"filename_id"`
+	FunctionNameID uint32 `structs:"function_name_id"`
+	ClassNameID    uint32 `structs:"class_name_id"`
+	LineStart      uint32 `structs:"line_start"`
 }
 
 func (e *EventCall) Clone() Event {
 	var result EventCall
 	result = *e
-	result.Children = nil
+	result.children = nil
 	return &result
 }
 
+func (e *EventCall) GetStringIDs() []uint32 {
+	return []uint32{e.FilenameID, e.FunctionNameID, e.ClassNameID}
+}
+
 type EventICall struct {
-	EventBase
-	FunctionNameID uint32
-	ClassNameID    uint32
+	EventBase             `structs:",flatten"`
+	FunctionNameID uint32 `structs:"function_name_id"`
+	ClassNameID    uint32 `structs:"class_name_id"`
 }
 
 func (e *EventICall) Clone() Event {
 	var result EventICall
 	result = *e
-	result.Children = nil
+	result.children = nil
 	return &result
+}
+
+func (e *EventICall) GetStringIDs() []uint32 {
+	return []uint32{e.FunctionNameID, e.ClassNameID}
 }

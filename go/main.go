@@ -10,6 +10,7 @@ import (
 
 	"github.com/vadd/phtgui/trace"
 	"github.com/gorilla/mux"
+	"github.com/fatih/structs"
 )
 
 func main() {
@@ -56,23 +57,36 @@ func main() {
 
 		var threshold uint64 = t.RequestEvent.GetDuration() / 100
 
-		var walker func (source trace.Event) trace.Event
-		walker = func (source trace.Event) trace.Event {
-			var dest trace.Event
+		var walker func (source trace.Event, strings map[uint32]string) map[string]interface{}
+		walker = func (source trace.Event, strings map[uint32]string) map[string]interface{} {
+			var result map[string]interface{}
 			if source.GetDuration() > threshold {
-				dest = source.Clone()
+				result = structs.Map(source)
+				result["type"] = structs.Name(source)
+				result["children"] = []interface{}{}
+
+				for _, stringID := range source.GetStringIDs() {
+					strings[stringID] = t.Strings[stringID]
+				}
+
+				children := []interface{}{}
 				for _, sourceChild := range source.GetChildren() {
-					destChild := walker(sourceChild)
-					if destChild != nil {
-						dest.AddChild(destChild)
+					resultChild := walker(sourceChild, strings)
+					if resultChild != nil {
+						children = append(children, resultChild)
 					}
 				}
+				result["children"] = children
 			}
-			return dest
+			return result
 		}
 
-		dest := walker(t.RequestEvent)
-		json.NewEncoder(w).Encode(dest)
+		strings := make(map[uint32]string)
+		tree := walker(t.RequestEvent, strings)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"strings": strings,
+			"root": tree,
+		})
 	})
 
 	http.ListenAndServe(":8080", r)

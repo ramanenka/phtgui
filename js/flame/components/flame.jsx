@@ -4,12 +4,12 @@ import {connect} from 'react-redux'
 class BarBase extends React.Component {
   render() {
     let {event, level, tscScale, tsc0} = this.props,
-      x = (event.TscBegin - tsc0) * tscScale,
+      x = (event.tsc_begin - tsc0) * tscScale,
       y = level * 16,
-      width = (event.TscEnd - event.TscBegin) * tscScale,
-      clonedEvent = Object.assign({}, event, {Children: null})
+      width = (event.tsc_end - event.tsc_begin) * tscScale,
+      clonedEvent = Object.assign({}, event, {children: null})
 
-    delete clonedEvent.Children
+    delete clonedEvent.children
 
     let text = width > 5 ? <text x={x + "%"} y={y + 10}>{JSON.stringify(clonedEvent)}</text> : null
 
@@ -40,11 +40,9 @@ class FlameBase extends React.Component {
       if (level > maxLevel) {
         maxLevel = level
       }
-      bars.push(<Bar key={event.TscBegin} level={level} event={event} />)
-      if (event.Children) {
-        for (let child of event.Children) {
-          traverse(child, level + 1)
-        }
+      bars.push(<Bar key={event.tsc_begin} level={level} event={event} />)
+      for (let child of event.children) {
+        traverse(child, level + 1)
       }
     }
     traverse(this.props.event)
@@ -57,7 +55,7 @@ class FlameBase extends React.Component {
 
 const Flame = connect(
   state => ({
-    event: state.trace.flame.tree
+    event: state.trace.flame.root
   }),
   dispatch => ({
 

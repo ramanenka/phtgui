@@ -11,7 +11,8 @@ export const FLAME_TREE_RECEIVE = 'FLAME_TREE_RECEIVE'
 function receiveFlameTree(json) {
   return {
     type: FLAME_TREE_RECEIVE,
-    tree: json
+    root: json.root,
+    strings: json.strings
   }
 }
 

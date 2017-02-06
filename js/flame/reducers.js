@@ -7,9 +7,10 @@ export function flame(state = {isFetching: false, tree: false}, action) {
     case FLAME_TREE_RECEIVE:
       return Object.assign({}, state, {
         isFetching: false,
-        tree: action.tree,
-        tscBegin: action.tree.TscBegin,
-        tscEnd: action.tree.TscEnd
+        root: action.root,
+        strings: action.strings,
+        tscBegin: action.root.tsc_begin,
+        tscEnd: action.root.tsc_end
       })
     default:
       return state
