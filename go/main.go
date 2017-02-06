@@ -55,7 +55,7 @@ func main() {
 		t := trace.NewTrace(fmt.Sprintf("/traces/%s.phtrace", traceId))
 		t.LoadTree()
 
-		var threshold uint64 = t.RequestEvent.GetDuration() / 100
+		var threshold uint64 = t.RequestEvent.GetDuration() / 1000
 
 		var walker func (source trace.Event, strings map[uint32]string) map[string]interface{}
 		walker = func (source trace.Event, strings map[uint32]string) map[string]interface{} {
