@@ -13,7 +13,7 @@ class BarBase extends React.Component {
 
     let text = width > 5 ? <text x={x + "%"} y={y + 10}>{JSON.stringify(clonedEvent)}</text> : null
 
-    return (<g>
+    return (<g className={event.type}>
       <rect x={x + "%"} y={y} width={width + "%"} height="15" rx="2" ry="2" />
       {text}
     </g>)
