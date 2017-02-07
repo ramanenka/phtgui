@@ -5,7 +5,6 @@ import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
 import {Provider} from 'react-redux'
 import {hashHistory} from 'react-router'
-import {syncHistoryWithStore} from 'react-router-redux'
 import AppReducer from './reducer'
 import createRouter from './router'
 
@@ -16,11 +15,10 @@ let store = createStore(
     createLogger()
   )
 )
-const history = syncHistoryWithStore(hashHistory, store)
 
 render(
   <Provider store={store}>
-    {createRouter(store, history)}
+    {createRouter(store, hashHistory)}
   </Provider>,
   document.getElementById('root')
 )
