@@ -17,9 +17,10 @@ function receiveFlameTree(json) {
 }
 
 export function fetchFlameTree() {
-  return dispatch => {
+  return (dispatch, getState) => {
+    let state = getState()
     dispatch(requestFlameTree())
-    return fetch('/api/v1/traces/phtrace/tree')
+    return fetch('/api/v1/traces/' + state.trace.traceId + '/tree')
       .then(response => response.json())
       .then(json => dispatch(receiveFlameTree(json)))
       .catch(e => console.log(e))

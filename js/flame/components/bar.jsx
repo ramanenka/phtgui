@@ -67,9 +67,9 @@ class BarBase extends React.Component {
 
 const Bar = connect(
   state => ({
-    tscScale: 1 * 100 / (state.trace.flame.tscEnd - state.trace.flame.tscBegin),
-    tsc0: state.trace.flame.tscBegin,
-    strings: state.trace.flame.strings
+    tscScale: 1 * 100 / (state.flame.tscEnd - state.flame.tscBegin),
+    tsc0: state.flame.tscBegin,
+    strings: state.flame.strings
   }),
   dispatch => ({})
 )(BarBase)

@@ -29,7 +29,7 @@ class FlameBase extends React.Component {
 
 const Flame = connect(
   state => ({
-    event: state.trace.flame.root
+    event: state.flame.root
   }),
   dispatch => ({
 

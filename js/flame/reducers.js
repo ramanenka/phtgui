@@ -1,6 +1,9 @@
 import {FLAME_TREE_REQUEST, FLAME_TREE_RECEIVE} from './actions'
+import {TRACE_CLOSE} from '../trace/actions'
 
-export function flame(state = {isFetching: false, tree: false}, action) {
+const defaultState = {isFetching: false, tree: false}
+
+export function flame(state = defaultState, action) {
   switch (action.type) {
     case FLAME_TREE_REQUEST:
       return Object.assign({}, state, {isFetching: true})
@@ -12,6 +15,8 @@ export function flame(state = {isFetching: false, tree: false}, action) {
         tscBegin: action.root.tsc_begin,
         tscEnd: action.root.tsc_end
       })
+    case TRACE_CLOSE:
+      return defaultState
     default:
       return state
   }
