@@ -48,6 +48,16 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 
+	r.HandleFunc("/api/v1/traces/{traceId}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		traceId := vars["traceId"]
+
+		t := trace.NewTrace(fmt.Sprintf("/traces/%s.phtrace", traceId))
+		t.LoadTree()
+
+		json.NewEncoder(w).Encode(structs.Map(t.RequestEvent))
+	})
+
 	r.HandleFunc("/api/v1/traces/{traceId}/tree", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		traceId := vars["traceId"]
