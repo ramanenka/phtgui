@@ -1,11 +1,23 @@
-import {TRACE_OPEN, TRACE_CLOSE} from './actions'
+import {TRACE_OPEN, TRACE_CLOSE, TRACE_REQUEST, TRACE_RECEIVE} from './actions'
 
-export function trace(state = {}, action) {
+const defaultState = {
+  isFetching: false,
+  traceId: null
+}
+
+export function trace(state = defaultState, action) {
   switch(action.type) {
     case TRACE_OPEN:
-      return {traceId: action.traceId}
+      return Object.assign({}, state, {traceId: action.traceId})
     case TRACE_CLOSE:
-      return {}
+      return defaultState
+    case TRACE_REQUEST:
+      return Object.assign({}, state, {isFetching: true})
+    case TRACE_RECEIVE:
+      return Object.assign({}, state, {
+        isFetching: false,
+        data: action.data
+      })
     default:
       return state
   }

@@ -12,3 +12,29 @@ export function closeTrace() {
     type: TRACE_CLOSE
   }
 }
+
+export const TRACE_REQUEST = 'TRACE_REQUEST'
+export function requestTrace() {
+  return {
+    type: TRACE_REQUEST
+  }
+}
+
+export const TRACE_RECEIVE = 'TRACE_RECEIVE'
+export function receiveTrace(data) {
+  return {
+    type: TRACE_RECEIVE,
+    data
+  }
+}
+
+export function fetchTrace() {
+  return (dispatch, getState) => {
+    dispatch(requestTrace())
+    let state = getState()
+    return fetch('/api/v1/traces/' + state.trace.traceId)
+      .then(response => response.json())
+      .then(json => dispatch(receiveTrace(json)))
+      .catch(e => console.log(e))
+  }
+}
