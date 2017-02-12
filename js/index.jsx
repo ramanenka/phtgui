@@ -12,7 +12,7 @@ let store = createStore(
   AppReducer,
   applyMiddleware(
     thunkMiddleware,
-    createLogger()
+    createLogger({collapsed: true})
   )
 )
 
