@@ -1,10 +1,12 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import Bar from './bar'
+import {resizeFlame} from '../actions'
 
 class FlameBase extends React.Component {
   render() {
-    if (!this.props.event) {
+    let {isFetching, event} = this.props
+    if (isFetching) {
       return (<div>Loading...</div>)
     }
 
@@ -19,20 +21,35 @@ class FlameBase extends React.Component {
         traverse(child, level + 1)
       }
     }
-    traverse(this.props.event)
 
-    return (<svg xmlns="http://www.w3.org/2000/svg" width="100%" height={maxLevel * 16}>
+    if (event) {
+      traverse(event)
+    }
+
+    return (<svg xmlns="http://www.w3.org/2000/svg"
+              width="100%"
+              height={maxLevel * 16}
+              ref={svg => this.svg = svg}>
       {bars}
     </svg>)
+  }
+
+  componentDidMount() {
+    window.setTimeout(() => {
+      this.props.onResize(this.svg.width.baseVal.value)
+    }, 0)
   }
 }
 
 const Flame = connect(
   state => ({
-    event: state.flame.root
+    event: state.flame.root,
+    isFetching: state.flame.isFetching
   }),
   dispatch => ({
-
+    onResize: (width) => {
+      dispatch(resizeFlame(width))
+    }
   })
 )(FlameBase)
 

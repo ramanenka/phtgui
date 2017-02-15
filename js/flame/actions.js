@@ -26,3 +26,11 @@ export function fetchFlameTree() {
       .catch(e => console.log(e))
   }
 }
+
+export const FLAME_RESIZE = 'FLAME_RESIZE'
+export function resizeFlame(width) {
+  return {
+    type: FLAME_RESIZE,
+    width
+  }
+}
