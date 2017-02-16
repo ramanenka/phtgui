@@ -1,4 +1,4 @@
-import {FLAME_TREE_REQUEST, FLAME_TREE_RECEIVE, FLAME_RESIZE} from './actions'
+import {FLAME_TREE_REQUEST, FLAME_TREE_RECEIVE, FLAME_RESIZE, FLAME_CLOSE} from './actions'
 import {TRACE_CLOSE} from '../trace/actions'
 
 const defaultState = {
@@ -23,6 +23,8 @@ export function flame(state = defaultState, action) {
       })
     case FLAME_RESIZE:
       return Object.assign({}, state, {width: action.width})
+    case FLAME_CLOSE:
+      return Object.assign({}, state, {width: 0})
     case TRACE_CLOSE:
       return defaultState
     default:

@@ -29,14 +29,17 @@ class FlameBase extends React.Component {
     return (<svg xmlns="http://www.w3.org/2000/svg"
               width="100%"
               height={maxLevel * 16}
-              ref={svg => this.svg = svg}>
+              ref={svg => {this.svg = svg}}>
       {bars}
     </svg>)
   }
 
   componentDidMount() {
-    window.setTimeout(() => {
-      this.props.onResize(this.svg.width.baseVal.value)
+    let svg = this.svg
+    let onResize = this.props.onResize
+
+    setTimeout(() => {
+      onResize(svg.width.baseVal.value)
     }, 0)
   }
 }
