@@ -5,13 +5,29 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strings"
+	"strconv"
 
 	"github.com/vadd/phtgui/trace"
 	"github.com/gorilla/mux"
 	"github.com/fatih/structs"
 )
+
+func getUint(values url.Values, name string, defaultValue uint64) uint64 {
+	strVal := values.Get(name)
+	if len(strVal) == 0 {
+		return defaultValue
+	}
+
+	result, err := strconv.ParseUint(strVal, 10, 64)
+	if err != nil {
+		return defaultValue
+	}
+
+	return result
+}
 
 func main() {
 	r := mux.NewRouter()
@@ -65,12 +81,16 @@ func main() {
 		t := trace.NewTrace(fmt.Sprintf("/traces/%s.phtrace", traceId))
 		t.LoadTree()
 
-		var threshold uint64 = t.RequestEvent.GetDuration() / 1000
+		values := r.URL.Query()
+		threshold := getUint(values, "threshold", t.RequestEvent.GetDuration() / 1000)
+		tscBegin := getUint(values, "tsc_begin", t.RequestEvent.GetTscBegin())
+		tscEnd := getUint(values, "tsc_end", t.RequestEvent.GetTscEnd())
 
 		var walker func (source trace.Event, strings map[uint32]string) map[string]interface{}
 		walker = func (source trace.Event, strings map[uint32]string) map[string]interface{} {
 			var result map[string]interface{}
-			if source.GetDuration() > threshold {
+
+			if source.GetTscEnd() >= tscBegin && source.GetTscBegin() <= tscEnd && source.GetDuration() > threshold {
 				result = structs.Map(source)
 				result["type"] = structs.Name(source)
 				result["children"] = []interface{}{}
