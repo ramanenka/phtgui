@@ -2,8 +2,8 @@ import {fetchFlameTree} from './actions'
 
 export function fetchFlameTreeObserver(store) {
   let lastState = {
-    x0: -1,
-    x100: -1,
+    tsc0: -1,
+    tsc100: -1,
     width: -1
   }
 

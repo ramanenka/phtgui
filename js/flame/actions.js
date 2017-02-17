@@ -33,15 +33,16 @@ function receiveFlameTree(json) {
 export function fetchFlameTree() {
   return (dispatch, getState) => {
     let state = getState(),
-      traceData = state.trace.data,
-      tscBegin = Math.round((traceData.tsc_end - traceData.tsc_begin) * state.flame.x0 / 100 + traceData.tsc_begin),
-      tscEnd = Math.round((traceData.tsc_end - traceData.tsc_begin) * state.flame.x100 / 100 + traceData.tsc_begin),
-      threshold = Math.round((tscEnd - tscBegin) / state.flame.width / window.devicePixelRatio)
+      threshold = Math.round(
+        (state.flame.tsc100 - state.flame.tsc0)
+        / state.flame.width
+        / window.devicePixelRatio
+      )
 
     dispatch(requestFlameTree())
     return fetch('/api/v1/traces/' + state.trace.traceId + '/tree'
-      + '?tsc_begin=' + tscBegin
-      + '&tsc_end=' + tscEnd
+      + '?tsc_begin=' + state.flame.tsc0
+      + '&tsc_end=' + state.flame.tsc100
       + '&threshold=' + threshold)
       .then(response => response.json())
       .then(json => dispatch(receiveFlameTree(json)))
