@@ -5,11 +5,7 @@ import {resizeFlame} from '../actions'
 
 class FlameBase extends React.Component {
   render() {
-    let {isFetching, event} = this.props
-    if (isFetching) {
-      return (<div>Loading...</div>)
-    }
-
+    let {event} = this.props
     let bars = []
     let maxLevel = 0
     let traverse = (event, level = 0) => {
@@ -28,7 +24,7 @@ class FlameBase extends React.Component {
 
     return (<svg xmlns="http://www.w3.org/2000/svg"
               width="100%"
-              height={maxLevel * 16}
+              height={(maxLevel + 1) * 16}
               ref={svg => {this.svg = svg}}>
       {bars}
     </svg>)
@@ -46,8 +42,7 @@ class FlameBase extends React.Component {
 
 const Flame = connect(
   state => ({
-    event: state.flame.root,
-    isFetching: state.flame.isFetching
+    event: state.flame.root
   }),
   dispatch => ({
     onResize: (width) => {

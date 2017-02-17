@@ -1,15 +1,16 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import {setFlameViewport} from '../actions'
 
 class BarBase extends React.Component {
   render() {
-    let {event, level, tscScale, tsc0} = this.props,
-      x = (event.tsc_begin - tsc0) * tscScale,
+    let {event, level, tscScale, tsc0, onClick} = this.props,
+      x = Math.max((event.tsc_begin - tsc0) * tscScale, 0),
       y = level * 16,
-      width = (event.tsc_end - event.tsc_begin) * tscScale
+      width = Math.min((event.tsc_end - event.tsc_begin) * tscScale, 100)
     let text = width > 5 ? <text x={x + "%"} y={y + 10}>&nbsp;{this.getText(event)}</text> : null
 
-    return (<g className={event.type}>
+    return (<g className={event.type} onClick={() => {onClick(event.tsc_begin, event.tsc_end)}}>
       <rect x={x + "%"} y={y} width={width + "%"} height="15" rx="2" ry="2" />
       {text}
     </g>)
@@ -71,7 +72,11 @@ const Bar = connect(
     tsc0: state.flame.tsc0,
     strings: state.flame.strings
   }),
-  dispatch => ({})
+  dispatch => ({
+    onClick: (tsc0, tsc100) => {
+      dispatch(setFlameViewport(tsc0, tsc100))
+    }
+  })
 )(BarBase)
 
 export default Bar
