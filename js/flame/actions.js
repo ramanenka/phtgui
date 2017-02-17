@@ -57,3 +57,12 @@ export function resizeFlame(width) {
     width
   }
 }
+
+export const FLAME_SET_VIEWPORT = 'FLAME_SET_VIEWPORT'
+export function setFlameViewport(tsc0, tsc100) {
+  return {
+    type: FLAME_SET_VIEWPORT,
+    tsc0,
+    tsc100
+  }
+}
