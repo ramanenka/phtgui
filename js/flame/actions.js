@@ -66,3 +66,30 @@ export function setFlameViewport(tsc0, tsc100) {
     tsc100
   }
 }
+
+export function fetchFlameTimelineIfNeeded() {
+  return (dispatch, getState) => {
+    let state = getState()
+    if (state.flame.timeline) {
+      return Promise.resolve()
+    }
+
+    let traceData = state.trace.data,
+      threshold = Math.round((traceData.tsc_end - traceData.tsc_begin) / 1000)
+
+    dispatch(requestFlameTree())
+    return fetch('/api/v1/traces/' + state.trace.traceId + '/tree'
+      + '?threshold=' + threshold)
+      .then(response => response.json())
+      .then(json => dispatch(receiveFlameTimeline(json)))
+      .catch(e => console.log(e))
+  }
+}
+
+export const FLAME_TIMELINE_RECEIVE = 'FLAME_TIMELINE_RECEIVE'
+export function receiveFlameTimeline(json) {
+  return {
+    type: FLAME_TIMELINE_RECEIVE,
+    data: json.root
+  }
+}

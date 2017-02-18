@@ -1,4 +1,4 @@
-import {fetchFlameTree} from './actions'
+import {fetchFlameTree, fetchFlameTimelineIfNeeded} from './actions'
 
 export function fetchFlameTreeObserver(store) {
   let lastState = {
@@ -25,6 +25,7 @@ export function fetchFlameTreeObserver(store) {
 
     if (stateChanged) {
       store.dispatch(fetchFlameTree())
+      store.dispatch(fetchFlameTimelineIfNeeded())
     }
   }
 

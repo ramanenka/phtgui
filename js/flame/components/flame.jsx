@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import Bar from './bar'
+import Timeline from './timeline'
 import {resizeFlame} from '../actions'
 
 class FlameBase extends React.Component {
@@ -24,9 +25,12 @@ class FlameBase extends React.Component {
 
     return (<svg xmlns="http://www.w3.org/2000/svg"
               width="100%"
-              height={(maxLevel + 1) * 16}
+              height={(maxLevel + 1) * 16 + 50}
               ref={svg => {this.svg = svg}}>
-      {bars}
+      <Timeline height={50} />
+      <g className="bars-container" transform="translate(0 50)">
+        {bars}
+      </g>
     </svg>)
   }
 
