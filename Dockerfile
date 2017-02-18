@@ -4,6 +4,7 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install -y nodejs
 COPY package.json ./
 RUN npm i
+RUN mkdir public && cp node_modules/bootstrap/dist/css/bootstrap.min.css* public/
 
 RUN go get -u github.com/gorilla/mux
 RUN go get github.com/fatih/structs

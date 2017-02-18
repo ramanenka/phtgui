@@ -6,8 +6,15 @@ import {fetchTraces} from '../actions'
 let TracesList = function({traces, onRefreshClick}) {
   return (
     <div>
-      <div onClick={onRefreshClick}>Refresh</div>
-      <Table traces={traces} />
+      <div class="page-header">
+        <h1>Traces List</h1>
+      </div>
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <a className="btn btn-default" role="button" onClick={onRefreshClick}>Refresh</a>
+        </div>
+        <Table traces={traces} />
+      </div>
     </div>
   )
 }

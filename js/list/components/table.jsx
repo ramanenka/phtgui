@@ -4,7 +4,7 @@ import {Link} from 'react-router'
 export default class Table extends React.Component {
   render() {
     return (
-      <table>
+      <table className="table">
         <thead>
           <tr>
             <th>Name</th>
