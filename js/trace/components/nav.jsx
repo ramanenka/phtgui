@@ -5,12 +5,13 @@ export default class TraceNav extends React.Component {
   render() {
     let traceId = this.props.params.traceId
     return (<div>
+      <div style={{float:'right'}}><Link className="btn btn-default" to={'/'}>Back</Link></div>
       <h1>Trace {traceId}</h1>
-      <ul role="nav">
+
+      <ul role="nav" className="nav nav-tabs">
         <li><Link to={"/traces/" + traceId}>General</Link></li>
         <li><Link to={"/traces/" + traceId + "/flame"}>Flame</Link></li>
       </ul>
-      <div><Link to={'/'}>Back</Link></div>
       {this.props.children}
     </div>)
   }
