@@ -5,6 +5,11 @@ import Timeline from './timeline'
 import {resizeFlame} from '../actions'
 
 class FlameBase extends React.Component {
+  constructor(props) {
+    super(props)
+    this.resizeHandler = this.resizeHandler.bind(this)
+  }
+
   render() {
     let {event} = this.props
     let bars = []
@@ -34,13 +39,25 @@ class FlameBase extends React.Component {
     </svg>)
   }
 
-  componentDidMount() {
-    let svg = this.svg
-    let onResize = this.props.onResize
+  resizeHandler() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId)
+    }
 
+    this.timeoutId = setTimeout(() => {
+      this.props.onResize(this.svg.width.baseVal.value)
+    }, 200)
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeHandler)
     setTimeout(() => {
-      onResize(svg.width.baseVal.value)
+      this.props.onResize(this.svg.width.baseVal.value)
     }, 0)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeHandler)
   }
 }
 
