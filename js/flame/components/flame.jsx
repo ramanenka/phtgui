@@ -40,10 +40,14 @@ class FlameBase extends React.Component {
   }
 
   render() {
-    let {event} = this.props
+    let {event, tsc0, tsc100} = this.props
     let bars = []
     let maxLevel = 0
     let traverse = (event, level = 0) => {
+      if (event.tsc_end < tsc0 || event.tsc_begin > tsc100) {
+        return
+      }
+
       if (level > maxLevel) {
         maxLevel = level
       }
@@ -101,7 +105,9 @@ class FlameBase extends React.Component {
 
 const Flame = connect(
   state => ({
-    event: state.flame.root
+    event: state.flame.root,
+    tsc100: state.flame.tsc100,
+    tsc0: state.flame.tsc0
   }),
   dispatch => ({
     onResize: (width) => {
