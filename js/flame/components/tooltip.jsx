@@ -27,11 +27,13 @@ class TooltipBase extends React.Component {
   }
 
   componentDidUpdate() {
-    let {x, y} = this.props,
-      top = (y + 20) + 'px',
-      left = (x + 20) + 'px'
+    let {x, y} = this.props
+      x += window.scrollX
+      y += window.scrollY
 
-    let width = this.div.offsetWidth,
+    let top = (y + 20) + 'px',
+      left = (x + 20) + 'px',
+      width = this.div.offsetWidth,
       maxWidth = window.innerWidth + window.scrollX,
       height = this.div.offsetHeight,
       maxHeight = window.innerHeight + window.scrollY
