@@ -4,13 +4,17 @@ import {setFlameViewport} from '../actions'
 
 class BarBase extends React.Component {
   render() {
-    let {event, level, tscScale, tsc0, onClick} = this.props,
+    let {event, level, tscScale, tsc0, onClick, onMouseEnter, onMouseLeave, onMouseMove} = this.props,
       x = Math.max((event.tsc_begin - tsc0) * tscScale, 0),
       y = level * 16,
       width = Math.min((event.tsc_end - event.tsc_begin) * tscScale, 100)
     let text = width > 5 ? <text x={x + "%"} y={y + 10}>&nbsp;{this.getText(event)}</text> : null
 
-    return (<g className={event.type} onClick={() => {onClick(event.tsc_begin, event.tsc_end)}}>
+    return (<g className={event.type}
+        onClick={() => {onClick(event.tsc_begin, event.tsc_end)}}
+        onMouseEnter={(ev) => {onMouseEnter(event, ev.clientX, ev.clientY)}}
+        onMouseLeave={onMouseLeave}
+        onMouseMove={(ev) => {onMouseMove(ev.clientX, ev.clientY)}}>
       <rect x={x + "%"} y={y} width={width + "%"} height="15" rx="2" ry="2" />
       {text}
     </g>)
