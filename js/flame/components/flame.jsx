@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import Bar from './bar'
+import * as Bars from './bars/index'
 import Timeline from './timeline'
 import Tooltip from './tooltip'
 import {resizeFlame} from '../actions'
@@ -51,8 +51,10 @@ class FlameBase extends React.Component {
       if (level > maxLevel) {
         maxLevel = level
       }
+
+      let BarType = Bars[event.type + 'Bar']
       bars.push(
-        <Bar key={event.tsc_begin}
+        <BarType key={event.tsc_begin}
           level={level}
           event={event}
           onMouseEnter={this.onBarMouseEnter}
