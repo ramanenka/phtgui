@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   entry: './js/index.jsx',
   output: {
@@ -11,6 +13,10 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".json", ".jsx"],
+    modules: [
+      "node_modules",
+      path.resolve('./js')
+    ]
   },
   devtool: "source-map"
 }

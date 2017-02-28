@@ -1,6 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router'
-import NavLink from '../../common/components/NavLink'
+import NavLink from 'common/components/NavLink'
 
 export default class TraceNav extends React.Component {
   render() {

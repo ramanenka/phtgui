@@ -5,8 +5,8 @@ import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
 import {Provider} from 'react-redux'
 import {hashHistory} from 'react-router'
-import AppReducer from './reducer'
-import createRouter from './router'
+import AppReducer from 'reducer'
+import createRouter from 'router'
 
 let store = createStore(
   AppReducer,

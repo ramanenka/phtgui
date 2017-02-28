@@ -7,7 +7,7 @@ import {
   FLAME_TIMELINE_RECEIVE
 } from './actions'
 
-import {TRACE_RECEIVE, TRACE_CLOSE} from '../trace/actions'
+import {TRACE_RECEIVE, TRACE_CLOSE} from 'trace/actions'
 
 const defaultState = {
   isFetching: false,

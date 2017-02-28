@@ -1,6 +1,6 @@
 import Bar from './bar'
 import React from 'react'
-import {stringTailUntil} from '../../../utils'
+import {stringTailUntil} from 'utils'
 
 function labelFormatter(event, strings) {
   return stringTailUntil(strings[event.filename_id], '/')
