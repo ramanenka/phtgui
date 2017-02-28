@@ -1,9 +1,17 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
-class TooltipBase extends React.Component {
+class Tooltip extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      event: null,
+      x: 0,
+      y: 0
+    }
+  }
   render() {
-    let {event} = this.props
+    let {event} = this.state
 
     let text, display
 
@@ -27,7 +35,7 @@ class TooltipBase extends React.Component {
   }
 
   componentDidUpdate() {
-    let {x, y} = this.props
+    let {x, y} = this.state
       x += window.scrollX
       y += window.scrollY
 
@@ -50,10 +58,5 @@ class TooltipBase extends React.Component {
     this.div.style.left = left
   }
 }
-
-const Tooltip = connect(
-  state => ({}),
-  dispatch => ({})
-)(TooltipBase)
 
 export default Tooltip

@@ -1,6 +1,6 @@
 import React from 'react'
 import {Route} from 'react-router'
-import Flame from './components/flame'
+import FlameContainer from './components/flame-container'
 import {fetchFlameTreeObserver} from './observers'
 import {openFlame, closeFlame} from './actions'
 
@@ -20,7 +20,7 @@ export function createRouter(store, history, children = []) {
   return (
     <Route key="flame"
       path="/traces/:traceId/flame"
-      component={Flame}
+      component={FlameContainer}
       onEnter={onEnter}
       onLeave={onLeave}>
       {children}
