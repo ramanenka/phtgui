@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import * as Bars from './bars/index'
+import * as Bars from './bars'
 import Timeline from './timeline'
 import Tooltip from './tooltip'
 import {resizeFlame} from '../actions'
