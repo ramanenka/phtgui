@@ -1,5 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import * as TooltipContents from './tooltip-contents'
 
 class Tooltip extends React.Component {
   constructor(props) {
@@ -10,16 +11,14 @@ class Tooltip extends React.Component {
       y: 0
     }
   }
-  render() {
-    let {event} = this.state
 
-    let text, display
+  render() {
+    let {event} = this.state,
+      content, display
 
     if (event) {
-      event = Object.assign({}, event, {children: null})
-      delete event.children
-      text = JSON.stringify(event)
-
+      let TooltipContent = TooltipContents[event.type]
+      content = <TooltipContent event={event} />
       display = 'block'
     } else {
       display = 'none'
@@ -28,8 +27,7 @@ class Tooltip extends React.Component {
     return (
       <div className="flame-tooltip" ref={div => {this.div = div}}
         style={{display}}>
-
-        {text}
+        {content}
       </div>
     )
   }
